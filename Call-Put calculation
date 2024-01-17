@@ -1,0 +1,26 @@
+# We aim here at calculating european options with the BS model
+
+import numpy as np
+from scipy import stats
+
+#define variables (defined arbitrarily):
+r=0.05
+S=50
+K=50
+T=180/365
+sigma=0.30
+
+# We create a function to apply BS model formulas
+def blackScholes(r,S,K,T,sigma, type="c"):
+    "calculate BS option price for a dividendless european call/put at time 0"
+    d1= (np.log(S/K) + (r + sigma**2/2)*T) / (sigma*np.sqrt(T))
+    d2= d1 - sigma*np.sqrt(T)
+    try:
+        if type=="c":
+            price= S* stats.norm.cdf(d1, 0, 1) - K*np.exp(-r*T)*stats.norm.cdf(d2, 0, 1)
+        elif type =="p":
+            price = K*np.exp(-r*T)*stats.norm.cdf(-d2, 0, 1) - S*stats.norm.cdf(-d1, 0, 1)
+        return price
+    except:
+        print('Please confirm all option parameters above !')
+print("Option price is:", round(blackScholes(r,S,K,T,sigma, type="c"), 4))
